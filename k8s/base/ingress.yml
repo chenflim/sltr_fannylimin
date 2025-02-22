@@ -7,7 +7,7 @@ metadata:
     cert-manager.io/cluster-issuer: "letsencrypt-prod"
 spec:
   rules:
-  - host: related-exciting-pigeon.ngrok-free.app
+  - host: sltr-fanny.my.id
     http:
       paths:
       - path: /welcome
@@ -19,5 +19,5 @@ spec:
               number: 80
   tls:
   - hosts:
-    - related-exciting-pigeon.ngrok-free.app
+    - sltr-fanny.my.id
     secretName: welcome-tls
