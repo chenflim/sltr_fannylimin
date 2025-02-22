@@ -1,0 +1,82 @@
+name: Build, Test, and Deploy
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    types:
+      - opened
+      - synchronize
+      - reopened
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: 'v1.0.0'
+        required: true
+
+jobs:
+  # Test stage
+  build-and-test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '16'
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Run tests
+        run: npm test
+
+  # Build and Deploy Stage (Only for "main" branch or manual trigger)
+  build-and-deploy:
+    needs: build-and-test
+    if: |
+      github.event_name == 'workflow_dispatch' ||
+      github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Login to GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GHCR_TOKEN }}
+
+      - name: Set Docker tag
+        run: |
+          if [[ -z "${{ github.event.inputs.tag }}" ]]; then
+            echo "TAG=latest" >> $GITHUB_ENV
+          else
+            echo "TAG=${{ github.event.inputs.tag }}" >> $GITHUB_ENV
+          fi
+
+      - name: Build Docker image
+        run: |
+          docker build -t ghcr.io/${{ github.repository_owner }}/welcome:latest \
+                       -t ghcr.io/${{ github.repository_owner }}/welcome:${{ env.TAG }} .
+
+      - name: Push Docker image
+        run: |
+          docker push ghcr.io/${{ github.repository_owner }}/welcome:latest
+          docker push ghcr.io/${{ github.repository_owner }}/welcome:${{ env.TAG }}
+
+      - name: Deploy to server
+        run: |
+          ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "
+          docker pull ghcr.io/${{ github.repository_owner }}/welcome:latest &&
+          docker stop welcome-app || true &&
+          docker rm welcome-app || true &&
+          docker run -d --name welcome-app -p 8000:5000 ghcr.io/${{ github.repository_owner }}/welcome"

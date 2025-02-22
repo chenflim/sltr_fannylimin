@@ -7,6 +7,11 @@ app.get('/welcome/:nama?', (req, res) => {
     res.send(`Selamat datang ${nama}`);
 });
 
-app.listen(port, () => {
-    console.log(`Server berjalan di http://localhost:${port}`);
-});
+//For testing
+module.exports = app;
+
+if (require.main === module) {
+    app.listen(port, () => {
+        console.log(`Server berjalan di http://localhost:${port}`);
+    });
+}
