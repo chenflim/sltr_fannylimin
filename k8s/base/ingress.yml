@@ -10,7 +10,7 @@ spec:
   - host: 86af-34-132-100-114.ngrok-free.app
     http:
       paths:
-      - path: /
+      - path: /welcome
         pathType: Prefix
         backend:
           service:
