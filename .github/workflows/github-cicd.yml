@@ -80,7 +80,7 @@ jobs:
 
       - name: Deploy to VM
         run: |
-          ssh -o StrictHostKeyChecking=no -i fanny_limin_rsa fannylimin@34.27.64.15 << EOF
+          ssh -o StrictHostKeyChecking=no -i fanny_limin_rsa fannylimin@34.132.100.114 << EOF
           cd ~/sltr_fannylimin
           git pull origin main
           npm install
@@ -91,4 +91,9 @@ jobs:
 
       - name: Kubernetes Deployment to Minikube container
         run: |
+          ssh -o StrictHostKeyChecking=no -i fanny_limin_rsa fannylimin@34.132.100.114 << EOF
+          cd ~/sltr_fannylimin
+          git pull origin main
+          npm install
           kubectl apply -k k8s/base
+          EOF
