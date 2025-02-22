@@ -85,5 +85,5 @@ jobs:
           git pull origin main
           npm install
           cd docker && docker-compose up -d --build && cd ..
-          npx pm2 restart all || npx pm2 start server.js --name sltr-welcome-app
+          npx pm2 restart all || npx pm2 start src/server.js --name sltr-welcome-app
           EOF
