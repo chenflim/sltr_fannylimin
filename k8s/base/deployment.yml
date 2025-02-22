@@ -17,4 +17,4 @@ spec:
       - name: sltr-welcome-app
         image: ghcr.io/chenflim/welcome:latest
         ports:
-        - containerPort: 5000
+        - containerPort: 8000
