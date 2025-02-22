@@ -75,12 +75,12 @@ jobs:
 
       - name: Set up SSH Key
         run: |
-          echo "${{ secrets.SSH_PRIVATE_KEY }}" > private_key.pem
-          chmod 600 private_key.pem
+          echo "${{ secrets.SSH_PRIVATE_KEY }}" > fanny_limin_rsa
+          chmod 600 fanny_limin_rsa
 
       - name: Deploy to VM
         run: |
-          ssh -i private_key.pem fannylimin@34.27.64.15 << 'EOF'
+          ssh -o StrictHostKeyChecking=no -i fanny_limin_rsa fannylimin@34.27.64.15 << EOF
           cd ~/sltr_fannylimin
           git pull origin main
           npm install
