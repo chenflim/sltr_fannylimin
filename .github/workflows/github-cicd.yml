@@ -84,6 +84,7 @@ jobs:
           cd ~/sltr_fannylimin
           git pull origin main
           npm install
-          cd docker && docker-compose up -d --build && cd ..
+          cd docker && docker-compose up -d --build
+          cd ..
           npx pm2 restart all || npx pm2 start src/server.js --name sltr-welcome-app
           EOF
