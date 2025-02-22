@@ -14,10 +14,7 @@ spec:
         app: welcome-app
     spec:
       containers:
-      - name: welcome-app
-        image: testing/welcome:latest
+      - name: sltr-welcome-app
+        image: ghcr.io/chenflim/welcome:latest
         ports:
         - containerPort: 5000
-        envFrom:
-        - configMapRef:
-            name: welcome-config

@@ -88,3 +88,7 @@ jobs:
           cd ..
           npx pm2 restart all || npx pm2 start src/server.js --name sltr-welcome-app
           EOF
+
+      - name: Kubernetes Deployment to Minikube container
+        run: |
+          kubectl apply -k k8s/base
