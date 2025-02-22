@@ -73,10 +73,15 @@ jobs:
             ghcr.io/${{ github.repository_owner }}/welcome:latest
             ghcr.io/${{ github.repository_owner }}/welcome:${{ env.TAG }}
 
-      - name: Deploy to server
+      - name: Set up SSH Key
         run: |
-          ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "
-          docker pull ghcr.io/${{ github.repository_owner }}/welcome:latest &&
-          docker stop welcome-app || true &&
-          docker rm welcome-app || true &&
-          docker run -d --name welcome-app -p 8000:5000 ghcr.io/${{ github.repository_owner }}/welcome"
+          echo "${{ secrets.SSH_PRIVATE_KEY }}" > private_key.pem
+          chmod 600 private_key.pem
+
+      - name: Deploy to VM
+        run: |
+          ssh -o StrictHostKeyChecking=no -i private_key.pem fannylimin@34.27.64.15 << 'EOF'
+          cd sltr_fannylimin
+          git pull origin main
+          docker-compose up -d --build
+          EOF
