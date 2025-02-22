@@ -11,7 +11,7 @@ app.get('/welcome/:nama?', (req, res) => {
 module.exports = app;
 
 if (require.main === module) {
-    app.listen(port, () => {
+    app.listen(port, '0.0.0.0', () => {
         console.log(`Server berjalan di http://localhost:${port}`);
     });
 }
