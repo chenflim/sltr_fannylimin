@@ -16,6 +16,7 @@ on:
         required: true
 
 jobs:
+  # Test stage
   build-and-test:
     runs-on: ubuntu-latest
     steps:
@@ -33,27 +34,49 @@ jobs:
       - name: Run tests
         run: npm test
 
-  build-and-push:
+  # Build and Deploy Stage (Only for "main" branch or manual trigger)
+  build-and-deploy:
     needs: build-and-test
-    # Only run deploy job for push to main or manual workflow dispatch
-    if: github.event_name == 'push' || github.event_name == 'workflow_dispatch'
+    if: |
+      github.event_name == 'workflow_dispatch' ||
+      github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Login
-        run: echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
 
-      - name: Build
-        run: |
-          docker build -t testing/welcome:latest -t testing/welcome:${{ github.event.inputs.tag }} .
+      - name: Login to GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GHCR_TOKEN }}
 
-      - name: Push
+      - name: Set Docker tag
         run: |
-          docker push testing/welcome:latest
-          docker push testing/welcome:${{ github.event.inputs.tag }}
+          if [[ -z "${{ github.event.inputs.tag }}" ]]; then
+            echo "TAG=latest" >> $GITHUB_ENV
+          else
+            echo "TAG=${{ github.event.inputs.tag }}" >> $GITHUB_ENV
+          fi
 
-      - name: Deploy
+      - name: Build Docker image
         run: |
-          ssh -o StrictHostKeyChecking=no user@your-server "docker pull testing/welcome:latest && docker run -d -p 8000:5000 testing/welcome"
+          docker build -t ghcr.io/${{ github.repository_owner }}/welcome:latest \
+                       -t ghcr.io/${{ github.repository_owner }}/welcome:${{ env.TAG }} .
+
+      - name: Push Docker image
+        run: |
+          docker push ghcr.io/${{ github.repository_owner }}/welcome:latest
+          docker push ghcr.io/${{ github.repository_owner }}/welcome:${{ env.TAG }}
+
+      - name: Deploy to server
+        run: |
+          ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "
+          docker pull ghcr.io/${{ github.repository_owner }}/welcome:latest &&
+          docker stop welcome-app || true &&
+          docker rm welcome-app || true &&
+          docker run -d --name welcome-app -p 8000:5000 ghcr.io/${{ github.repository_owner }}/welcome"
