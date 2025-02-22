@@ -80,8 +80,10 @@ jobs:
 
       - name: Deploy to VM
         run: |
-          ssh -o StrictHostKeyChecking=no -i private_key.pem fannylimin@34.27.64.15 << 'EOF'
-          cd sltr_fannylimin
+          ssh -i private_key.pem fannylimin@34.27.64.15 << 'EOF'
+          cd ~/sltr_fannylimin
           git pull origin main
-          docker-compose up -d --build
+          npm install
+          cd docker && docker-compose up -d --build && cd ..
+          npx pm2 restart all || npx pm2 start server.js --name sltr-welcome-app
           EOF
