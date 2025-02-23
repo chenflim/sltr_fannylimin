@@ -3,12 +3,13 @@ apiVersion: cert-manager.io/v1
 kind: ClusterIssuer
 metadata:
   name: letsencrypt-prod
+  namespace: sltr-fanny
 spec:
   acme:
     server: https://acme-v02.api.letsencrypt.org/directory
     email: chenflim.ug@gmail.com
     privateKeySecretRef:
-      name: letsencrypt-prod
+      name: letsencrypt-prod-key
     solvers:
     - http01:
         ingress:
