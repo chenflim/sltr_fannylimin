@@ -1,6 +1,6 @@
 version: '3.3'
 services:
   welcome-app:
-    image: testing/welcome
+    image: ghcr.io/chenflim/welcome:latest
     ports:
       - "8000:5000"
