@@ -95,5 +95,5 @@ jobs:
           cd ~/sltr_fannylimin
           git pull origin main
           npm install
-          kubectl apply -k k8s/base
+          microk8s kubectl apply -k k8s/base
           EOF
