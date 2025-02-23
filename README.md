@@ -10,7 +10,7 @@
   `cd docker`
   `docker-compose up -d`
 
-### The app now should be accessible on http://localhost:8000/welcome/name
+### The app now should be accessible on http://localhost:8000/welcome/name and http://fannylimin.my.id:8000/welcome/name
 <img width="409" alt="image" src="https://github.com/user-attachments/assets/ad9110a4-d8f8-4a85-a86c-157542d6f79a" />
 <img width="496" alt="image" src="https://github.com/user-attachments/assets/49b75bdc-a80c-4b0f-8bab-0fa1600b188b" />
 
