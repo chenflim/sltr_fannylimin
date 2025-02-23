@@ -3,19 +3,13 @@ kind: Ingress
 metadata:
   name: sltr-welcome-ingress
   namespace: sltr-fanny
-  annotations:
-    cert-manager.io/cluster-issuer: letsencrypt-prod
 spec:
   ingressClassName: nginx
-  tls:
-  - hosts:
-    - fannylimin.my.id
-    secretName: sltr-fanny-tls
   rules:
   - host: fannylimin.my.id
     http:
       paths:
-      - path: /welcome
+      - path: /
         pathType: Prefix
         backend:
           service:
