@@ -5,15 +5,14 @@ metadata:
   namespace: sltr-fanny
   annotations:
     cert-manager.io/cluster-issuer: letsencrypt-prod
-    nginx.ingress.kubernetes.io/rewrite-target: /
 spec:
   ingressClassName: nginx
   tls:
   - hosts:
-    - sltr-fanny.my.id
+    - fannylimin.my.id
     secretName: sltr-fanny-tls
   rules:
-  - host: sltr-fanny.my.id
+  - host: fannylimin.my.id
     http:
       paths:
       - path: /welcome
