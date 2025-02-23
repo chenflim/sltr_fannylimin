@@ -89,7 +89,7 @@ jobs:
           npx pm2 restart all || npx pm2 start src/server.js --name sltr-welcome-app
           EOF
 
-      - name: Kubernetes Deployment to Minikube container
+      - name: K8s Deployment to Microk8s container
         run: |
           ssh -o StrictHostKeyChecking=no -i fanny_limin_rsa fannylimin@34.132.100.114 << EOF
           cd ~/sltr_fannylimin
